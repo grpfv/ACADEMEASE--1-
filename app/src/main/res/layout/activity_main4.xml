@@ -12,13 +12,14 @@
         android:id="@+id/Hello"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="29dp"
         android:text="HELLO,"
         android:textColor="#BCA37F"
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/day"
+        app:layout_constraintEnd_toStartOf="@+id/User"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -26,16 +27,16 @@
         android:id="@+id/User"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="29dp"
-        android:layout_marginEnd="110dp"
+        android:layout_marginStart="3dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginBottom="42dp"
         android:text="USER!"
         android:textColor="#113946"
         android:textSize="30sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/imageView"
+        app:layout_constraintBottom_toTopOf="@+id/rectangularBox"
         app:layout_constraintStart_toEndOf="@+id/Hello"
         app:layout_constraintTop_toTopOf="parent" />
-
 
     <TextView
         android:id="@+id/day"
@@ -66,31 +67,27 @@
         android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="1dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="2dp"
         android:text="NAME:"
         android:textColor="#113946"
         android:textSize="15sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/Username"
-        app:layout_constraintEnd_toStartOf="@+id/bday"
-        app:layout_constraintHorizontal_bias="0.071"
-        app:layout_constraintStart_toEndOf="@+id/imageView2"
-        app:layout_constraintTop_toBottomOf="@+id/rectangularBox"
-        app:layout_constraintVertical_bias="0.992" />
+        app:layout_constraintStart_toEndOf="@+id/imageView2" />
 
     <TextView
         android:id="@+id/Username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
+        android:layout_marginBottom="15dp"
         android:text="USER NAME"
         android:textColor="#113946"
-        android:textSize="10sp"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toTopOf="@+id/school"
         app:layout_constraintEnd_toEndOf="@+id/rectangularBox"
         app:layout_constraintHorizontal_bias="0.038"
-        app:layout_constraintStart_toEndOf="@+id/imageView2"
-        app:layout_constraintTop_toTopOf="@+id/rectangularBox" />
+        app:layout_constraintStart_toEndOf="@+id/imageView2" />
 
     <TextView
         android:id="@+id/school"
@@ -111,62 +108,69 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="200dp"
         android:text="SCHOOL NAME"
         android:textColor="#113946"
-        android:textSize="10sp"
+        android:textSize="13sp"
         app:layout_constraintStart_toEndOf="@+id/imageView2"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/school" />
+
 
     <TextView
         android:id="@+id/bday"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="36dp"
+        android:layout_marginStart="95dp"
+        android:layout_marginBottom="2dp"
         android:text="BIRTHDAY:"
         android:textColor="#113946"
         android:textSize="15sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/ylevel"
-        app:layout_constraintEnd_toEndOf="@+id/rectangularBox" />
+        app:layout_constraintBottom_toTopOf="@+id/Userbday"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.413"
+        app:layout_constraintStart_toEndOf="@+id/name" />
 
     <TextView
         android:id="@+id/Userbday"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="22dp"
+        android:layout_marginBottom="12dp"
         android:text="MM-DD-YYY"
         android:textColor="#113946"
-        android:textSize="10sp"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toTopOf="@+id/ylevel"
         app:layout_constraintEnd_toEndOf="@+id/rectangularBox"
-        app:layout_constraintHorizontal_bias="0.658"
-        app:layout_constraintStart_toEndOf="@+id/Username"
-        app:layout_constraintTop_toBottomOf="@+id/bday" />
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/Username" />
 
     <TextView
         android:id="@+id/ylevel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="2dp"
         android:text="YEAR LEVEL:"
         android:textColor="#113946"
         android:textSize="15sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/yearlvl"
-        app:layout_constraintEnd_toEndOf="@+id/rectangularBox" />
+        app:layout_constraintEnd_toEndOf="@+id/rectangularBox"
+        app:layout_constraintHorizontal_bias="0.92"
+        app:layout_constraintStart_toEndOf="@+id/imageView2" />
 
     <TextView
         android:id="@+id/yearlvl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="50dp"
-        android:layout_marginBottom="28dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="24dp"
         android:text="YEAR LEVEL"
         android:textColor="#113946"
-        android:textSize="10sp"
+        android:textSize="13sp"
         app:layout_constraintBottom_toBottomOf="@+id/rectangularBox"
-        app:layout_constraintEnd_toEndOf="@+id/rectangularBox" />
-
+        app:layout_constraintEnd_toEndOf="@+id/rectangularBox"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/schoolname" />
 
     <ImageView
         android:id="@+id/imageView"
@@ -174,9 +178,12 @@
         android:layout_height="44dp"
         android:layout_marginTop="22dp"
         android:layout_marginEnd="8dp"
+        android:clickable="true"
+        android:onClick="buttonCLick"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/profile" />
+        app:srcCompat="@drawable/profile"
+        tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
     <ImageView
         android:id="@+id/imageView2"
@@ -282,5 +289,6 @@
         app:layout_constraintHorizontal_bias="0.53"
         app:layout_constraintStart_toStartOf="parent"
         tools:ignore="TouchTargetSizeCheck" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -139,8 +139,10 @@ public class MainActivity2 extends AppCompatActivity {
 
                             // Open the main activity
                             Intent intent = new Intent(MainActivity2.this, MainActivity4.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(intent);
                             finish();
+
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("Authentication", "signInWithEmailAndPassword:failure", task.getException());

@@ -64,6 +64,7 @@
         android:gravity="center"
         android:textColor="#113946"
         android:textSize="15sp"
+        android:focusable="false"
         app:layout_constraintBottom_toTopOf="@+id/boxbday"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -94,6 +95,7 @@
         android:gravity="center"
         android:textColor="#113946"
         android:textSize="15sp"
+        android:focusable="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.493"
         app:layout_constraintStart_toStartOf="parent"
@@ -124,6 +126,7 @@
         android:gravity="center"
         android:textColor="#113946"
         android:textSize="15sp"
+        android:focusable="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.493"
         app:layout_constraintStart_toStartOf="parent"
@@ -156,6 +159,7 @@
         android:gravity="center"
         android:textColor="#113946"
         android:textSize="15sp"
+        android:focusable="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.493"
         app:layout_constraintStart_toStartOf="parent"
@@ -182,13 +186,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:onClick="onEditSaveClick"
         android:text="Edit"
         android:textColor="#113946"
         android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="@+id/yearlvl"
         app:layout_constraintEnd_toEndOf="@+id/yearlvl"
         app:layout_constraintTop_toBottomOf="@+id/boxage"
-        app:layout_constraintVertical_bias="0.727" />
+        app:layout_constraintVertical_bias="0.727"
+        tools:ignore="TouchTargetSizeCheck" />
 
     <EditText
         android:id="@+id/boxschoolname"
@@ -199,6 +207,7 @@
         android:gravity="center"
         android:textColor="#113946"
         android:textSize="15sp"
+        android:focusable="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.493"
         app:layout_constraintStart_toStartOf="parent"
@@ -235,17 +244,18 @@
     <Button
         android:id="@+id/savebutton"
         android:layout_width="113dp"
-        android:layout_height="36dp"
+        android:layout_height="50dp"
         android:background="@drawable/buttonbg"
         android:fontFamily="sans-serif"
         android:text="SAVE"
         android:textColor="#FFF2D8"
-        android:textSize="13sp"
+        android:textSize="15sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/boxschoolname"
         tools:ignore="TouchTargetSizeCheck" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
