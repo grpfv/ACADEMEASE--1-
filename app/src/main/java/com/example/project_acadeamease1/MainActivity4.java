@@ -76,8 +76,8 @@ public class MainActivity4 extends AppCompatActivity {
             public void onClick(View view) {
                 // Navigate to Profile
                 Intent intent = new Intent(MainActivity4.this, MainActivity5.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
-                finish(); // Finish the current activity to prevent going back to MainActivity with the back button
             }
         });
 

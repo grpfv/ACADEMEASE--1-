@@ -19,9 +19,15 @@ import android.text.style.UnderlineSpan;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.content.Intent;
+import android.provider.MediaStore;
+import android.view.View;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -29,6 +35,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,29 +45,214 @@ import java.net.URL;
 
 public class MainActivity5 extends AppCompatActivity {
 
+    private EditText yearEditText;
+    private TextView editTextView;
+    private EditText schlnameEditText;
+    private TextView editsecondTextView;
+    private FirebaseHelper databaseHelper;
+    private Uri selectedImageUri;
+    private ProgressBar progressBar;
+
+    private static final int PICK_IMAGE_REQUEST = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main5);
 
-        // Set OnClickListener for "Edit" text under "YEAR LEVEL"
-        TextView yearLevelEdit = findViewById(R.id.yrlvledit);
-        underlineText(yearLevelEdit);
+        yearEditText = findViewById(R.id.yearlvl);
+        editTextView = findViewById(R.id.yrlvledit);
+        schlnameEditText = findViewById(R.id.boxschoolname);
+        editsecondTextView = findViewById(R.id.schoolnameedit);
+        progressBar = findViewById(R.id.progressBar);
 
-        // Set OnClickListener for "Edit" text under "SCHOOL NAME"
-        TextView schoolNameEdit = findViewById(R.id.schoolnameedit);
-        underlineText(schoolNameEdit);
 
         // Set OnClickListener for "CHANGE PROFILE" text
         TextView changePhotoTextView = findViewById(R.id.change_photo);
-        underlineText(changePhotoTextView);
+        changePhotoTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openImageChooser();
+            }
+        });
+
+        // Initialize DatabaseHelper
+        databaseHelper = new FirebaseHelper();
 
         // Fetch user data and set EditText values
         fetchAndSetUserData();
 
+        // Set OnClickListener for the TextView
+        editTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Toggle between Edit and Save
+                if (editTextView.getText().toString().equals("Edit")) {
+                    editTextView.setText("Save");
+                    yearEditText.setFocusableInTouchMode(true); // Make EditText editable
+                } else {
+                    editTextView.setText("Edit");
+                    yearEditText.setFocusable(false); // Make EditText not editable
+
+                    // Save changes to the database here
+                    saveChangesToDatabase(yearEditText.getText().toString());
+                }
+            }
+        });
+
+        // Set OnClickListener for the TextView
+        editsecondTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Toggle between Edit and Save
+                if (editsecondTextView.getText().toString().equals("Edit")) {
+                    editsecondTextView.setText("Save");
+                    schlnameEditText.setFocusableInTouchMode(true); // Make EditText editable
+                } else {
+                    editsecondTextView.setText("Edit");
+                    schlnameEditText.setFocusable(false); // Make EditText not editable
+
+                    // Save changes to the database here
+                    saveChangesToDatabase2(schlnameEditText.getText().toString());
+                }
+            }
+        });
+
+        // Set OnClickListener for the "SAVE" button
+        findViewById(R.id.savebutton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Save profile picture changes
+                if (selectedImageUri != null) {
+                    saveProfilePictureChanges(selectedImageUri);
+                } else {
+                    Toast.makeText(MainActivity5.this, "Please select an image first", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+
         // Set user profile image
         setProfileImage();
     }
+
+    private void openImageChooser() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, PICK_IMAGE_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            selectedImageUri = data.getData();
+
+            // Update the profile image in Firebase Storage and Database
+            updateProfileImage(selectedImageUri);
+        }
+    }
+
+
+    private void uploadImageToFirebaseStorage(Uri imageUri) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference()
+                    .child("Profile Picture") // Use the same path as in the loadImageFromUrl method
+                    .child(currentUser.getUid() + ".jpg");
+
+            storageReference.putFile(imageUri)
+                    .addOnSuccessListener(taskSnapshot -> {
+                        // Image uploaded successfully
+                        // Now get the download URL and update the Realtime Database
+                        storageReference.getDownloadUrl().addOnSuccessListener(uri -> {
+                            updateProfileImageUrl(uri.toString());
+                        });
+                    })
+                    .addOnFailureListener(exception -> {
+                        // Handle failed upload
+                        Toast.makeText(this, "Failed to upload image", Toast.LENGTH_SHORT).show();
+                    });
+        }
+    }
+
+    // Method to save changes to the profile picture
+    private void saveProfilePictureChanges(Uri selectedImageUri) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (currentUser != null) {
+            progressBar.setVisibility(View.VISIBLE);
+            DatabaseReference userReference = FirebaseDatabase.getInstance().getReference("Registered User")
+                    .child(currentUser.getUid());
+
+            // Generate a unique filename for the new profile picture
+            String newProfilePictureFilename = currentUser.getUid() + "_" + System.currentTimeMillis() + ".jpg";
+
+            // Storage reference for the new profile picture
+            StorageReference newProfilePictureRef = FirebaseStorage.getInstance().getReference()
+                    .child("Profile Picture")
+                    .child(newProfilePictureFilename);
+
+            // Upload the new profile picture to Firebase Storage
+            newProfilePictureRef.putFile(selectedImageUri)
+                    .addOnSuccessListener(taskSnapshot -> {
+                        // Image uploaded successfully
+                        // Now get the download URL and update the Realtime Database
+                        newProfilePictureRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                            // Update the profile picture URL in the database
+                            userReference.child("Profile Photo URL").setValue(uri.toString())
+                                    .addOnSuccessListener(aVoid -> {
+                                        // Profile picture URL updated successfully
+                                        runOnUiThread(() -> {
+                                            Toast.makeText(MainActivity5.this, "Profile picture changes saved", Toast.LENGTH_SHORT).show();
+                                        });
+                                        // Load the updated profile picture
+                                        setCircularImage(uri);
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        // Handle failed database update
+                                        runOnUiThread(() -> {
+                                            Toast.makeText(MainActivity5.this, "Failed to update profile picture", Toast.LENGTH_SHORT).show();
+                                        });
+                                    })
+                                        .addOnCompleteListener(task -> {
+                                        progressBar.setVisibility(View.GONE);
+                            });
+                        });
+                    })
+
+                    .addOnFailureListener(exception -> {
+                        // Handle failed upload
+                        runOnUiThread(() -> {
+                            Toast.makeText(MainActivity5.this, "Failed to upload new profile picture", Toast.LENGTH_SHORT).show();
+                        });
+                        progressBar.setVisibility(View.GONE);
+                    });
+        }
+    }
+
+    private void updateProfileImageUrl(String imageUrl) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            DatabaseReference userReference = FirebaseDatabase.getInstance().getReference("Registered User")
+                    .child(currentUser.getUid());
+
+            userReference.child("Profile Photo URL").setValue(imageUrl)
+                    .addOnFailureListener(e -> {
+                        // Handle failed database update
+                        Toast.makeText(this, "Failed to update profile photo", Toast.LENGTH_SHORT).show();
+                    });
+        }
+    }
+
+    private void updateProfileImage(Uri imageUri) {
+        uploadImageToFirebaseStorage(imageUri);
+
+        // Update the UI with the new profile image
+        setCircularImage(imageUri);
+    }
+
+
 
     // Method to underline a TextView
     private void underlineText(TextView textView) {
@@ -67,6 +260,31 @@ public class MainActivity5 extends AppCompatActivity {
         content.setSpan(new UnderlineSpan(), 0, content.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         textView.setText(content);
     }
+
+    // Method to save changes to the database
+    private void saveChangesToDatabase(String newValue) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            DatabaseReference userReference = FirebaseDatabase.getInstance().getReference("Registered User")
+                    .child(currentUser.getUid());
+
+            userReference.child("YearLevel").setValue(newValue);
+        }
+    }
+
+
+
+    // Method to save changes to the database
+    private void saveChangesToDatabase2(String newValue) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            DatabaseReference userReference = FirebaseDatabase.getInstance().getReference("Registered User")
+                    .child(currentUser.getUid());
+
+            userReference.child("School").setValue(newValue);
+        }
+    }
+
 
     // Fetch user data and set EditText values
     private void fetchAndSetUserData() {
@@ -110,6 +328,7 @@ public class MainActivity5 extends AppCompatActivity {
         }
     }
 
+
     // Set user profile image
     private void setProfileImage() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -142,6 +361,8 @@ public class MainActivity5 extends AppCompatActivity {
     private void loadImageFromUrl(String imageUrl) {
         ImageView profileImageView = findViewById(R.id.profile);
 
+        Glide.with(this)
+                .load(imageUrl);
         new Thread(() -> {
             try {
                 URL url = new URL(imageUrl);
@@ -177,11 +398,10 @@ public class MainActivity5 extends AppCompatActivity {
                 Bitmap circularBitmap = getRoundedBitmap(originalBitmap);
 
                 // Set the circular bitmap to the ImageView
-                ImageView profileImageView = null;
+                ImageView profileImageView = findViewById(R.id.profile);
                 profileImageView.setImageBitmap(circularBitmap);
             } catch (IOException e) {
                 e.printStackTrace();
-                Toast.makeText(this, "Error handling image", Toast.LENGTH_SHORT).show();
             }
         } else {
             Toast.makeText(this, "Selected image URI is null", Toast.LENGTH_SHORT).show();
