@@ -81,7 +81,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="15dp"
-        android:text="USER NAME"
+        android:text="FULL NAME"
         android:textColor="#113946"
         android:textSize="13sp"
         app:layout_constraintBottom_toTopOf="@+id/school"

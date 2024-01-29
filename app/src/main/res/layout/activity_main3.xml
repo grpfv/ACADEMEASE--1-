@@ -160,7 +160,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
-        android:text="USERNAME"
+        android:text="EMAIL"
         android:textColor="#113946"
         android:textSize="12sp"
         android:textStyle="italic"
