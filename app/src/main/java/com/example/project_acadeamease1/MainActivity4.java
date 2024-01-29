@@ -36,6 +36,9 @@ public class MainActivity4 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main4);
 
+        View scheduleBtn = findViewById(R.id.sectionBox);
+        View coursesBtn = findViewById(R.id.sectionBox2);
+
         // Get the current Firebase user
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -83,6 +86,10 @@ public class MainActivity4 extends AppCompatActivity {
 
         // Set the user's first name to the TextView
         setUserName(currentUser.getUid(), currentUser.getPhotoUrl());
+
+        scheduleBtn.setOnClickListener(v->startActivity(new Intent(MainActivity4.this, Schedule.class)));
+        coursesBtn.setOnClickListener(v->startActivity(new Intent(MainActivity4.this, Courses.class)));
+
     }
 
     // Method to set the user's first name to the TextView
